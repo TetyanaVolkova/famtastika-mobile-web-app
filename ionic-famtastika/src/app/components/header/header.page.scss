@@ -1,0 +1,17 @@
+:host {
+  ion-header {
+    display: flex;
+    height: 60px;
+    #title_content_wrapper {
+      display: flex;
+      img {
+        margin: auto 10px;
+        height: 55px;
+      }
+      span {
+        margin: auto;
+        height: 100%;
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+// Custom Theming for Angular Material
+// For more information: https://material.angular.dev/guide/theming
+@use "@coreui/coreui/scss/coreui" as * with (
+  $enable-deprecation-messages: false
+);
+
+// Import Chart.js custom tooltips styles
+@use "@coreui/chartjs/scss/coreui-chartjs" as *;
+@use "@angular/material" as mat;
+
+html {
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: "Shantell Sans",
+      density: -3,
+    )
+  );
+} /* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+}
+
+body {
+  overflow-x: hidden;
+  flex: 1;
+  margin: 0;
+  font-family: "Shantell Sans", Roboto, "Helvetica Neue", sans-serif;
+}
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
+:root {
+  @include mat.menu-overrides(
+    (
+      container-elevation-shadow: none,
+      container-color: transparent,
+    )
+  );
+}

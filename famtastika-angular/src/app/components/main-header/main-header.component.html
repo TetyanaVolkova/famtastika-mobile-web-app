@@ -1,0 +1,49 @@
+<mat-toolbar>
+  <img src="images/logo_1 1.svg" />
+  <span class="header_spacer"></span>
+  <section>
+    <a routerLink="/home">Parents</a>
+    <a routerLink="/home">Children</a>
+    <a routerLink="/home">Shop</a>
+    <div id="language_container">EN</div>
+
+    <!-- Menu starts here -->
+    <button
+      matIconButton
+      [matMenuTriggerFor]="menu"
+      mat-icon-button
+      aria-label="Menu"
+    >
+      <mat-icon>menu</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>ABOUT US</button>
+      <button mat-menu-item>OUR NEWS</button>
+      <button mat-menu-item>PODCASTS</button>
+      <button mat-menu-item>COURSES</button>
+      <button mat-menu-item>ARTICLES WITH EXPERTS</button>
+      <button mat-menu-item>CONSULTATIONS</button>
+      <button mat-menu-item>PRIVATE CLUB</button>
+      <button mat-menu-item>TESTIMONIALS</button>
+      <button mat-menu-item>CONTACT US</button>
+      <button mat-menu-item [matMenuTriggerFor]="examples">EXAMPLE</button>
+    </mat-menu>
+
+    <mat-menu #examples="matMenu">
+      <button mat-menu-item>EXAMPLE 1</button>
+      <button mat-menu-item>EXAMPLE 2</button>
+      <button mat-menu-item [matMenuTriggerFor]="three">EXAMPLE 3</button>
+      <button mat-menu-item>EXAMPLE 4</button>
+    </mat-menu>
+
+    <mat-menu #three="matMenu" xPosition="before">
+      <button mat-menu-item>Insects</button>
+      <button mat-menu-item>Molluscs</button>
+      <button mat-menu-item>Crustaceans</button>
+      <button mat-menu-item>Corals</button>
+      <button mat-menu-item>Arachnids</button>
+      <button mat-menu-item>Velvet worms</button>
+      <button mat-menu-item>Horseshoe crabs</button>
+    </mat-menu>
+  </section>
+</mat-toolbar>

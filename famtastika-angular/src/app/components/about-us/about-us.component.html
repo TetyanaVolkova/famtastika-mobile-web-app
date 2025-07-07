@@ -1,0 +1,50 @@
+<div id="sections_container">
+  <section id="section_1">
+    <img src="images/flashcards.png" />
+
+    <!-- More information on Carousel
+    https://coreui.io/angular/docs/components/carousel/  -->
+
+    <c-carousel
+      [dark]="true"
+      [wrap]="true"
+      [interval]="3000"
+      transition="slide"
+    >
+      <c-carousel-indicators />
+      <c-carousel-inner>
+        @for (slide of slides; track slide.src) {
+        <c-carousel-item>
+          <img
+            alt="{{ slide.title }}"
+            class="d-block w-100"
+            loading="lazy"
+            src="{{ slide.src }}"
+          />
+          <c-carousel-caption class="d-none d-md-block">
+            <!-- <h3>{{ slide.title }}</h3> -->
+            <p>{{ slide.subtitle }}</p>
+          </c-carousel-caption>
+        </c-carousel-item>
+        }
+      </c-carousel-inner>
+      <c-carousel-control [routerLink] caption="Previous" direction="prev" />
+      <c-carousel-control [routerLink] caption="Next" direction="next" />
+    </c-carousel>
+  </section>
+  <section id="section_2">
+    <img src="images/Rectangle 22.png" />
+    <img src="images/Rectangle 22.png" />
+    <img src="images/Rectangle 22.png" />
+  </section>
+  <section id="section_3">
+    <div id="left_section">
+      <img src="images/Rectangle 25.png" />
+      <img src="images/Rectangle 25.png" />
+    </div>
+    <img src="images/carousel.png" />
+  </section>
+  <section id="section_4">
+    <img src="images/image 3.png" alt="" />
+  </section>
+</div>

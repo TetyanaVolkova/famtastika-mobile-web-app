@@ -1,0 +1,68 @@
+:host {
+  .card-deck {
+    position: relative;
+    width: min(300px, 80%);
+    height: min(460px, 75%);
+    margin: 40px auto;
+  }
+
+  .swipe-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.4s ease;
+    perspective: 1000px;
+    z-index: 1;
+  }
+
+  .swipe-card.moving-out {
+    transform: translateX(150%) rotate(25deg);
+  }
+
+  .swipe-card.moving-in {
+    animation: slideBack 0.4s ease forwards;
+  }
+
+  .flip-card {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.8s;
+  }
+
+  .swipe-card.flipped .flip-card {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 20px;
+    }
+  }
+
+  .flip-card-back {
+    transform: rotateY(180deg);
+  }
+  ion-button {
+    width: 90px;
+    margin: auto;
+  }
+
+  @keyframes slideBack {
+    from {
+      transform: translateX(-150%) rotate(-25deg);
+    }
+    to {
+      transform: translateX(0) rotate(0);
+    }
+  }
+}

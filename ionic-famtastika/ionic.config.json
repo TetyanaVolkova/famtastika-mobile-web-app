@@ -1,0 +1,7 @@
+{
+  "name": "ionic-famtastika",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

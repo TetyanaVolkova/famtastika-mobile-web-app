@@ -1,0 +1,23 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  #announcement_wrapper {
+    height: 40px;
+    display: flex;
+    border-radius: 6px;
+    // background: linear-gradient(45deg, #ceb954, #808000, #808000, #cbb751);
+    background-color: #808000;
+    box-shadow: 0 1px 0 0 rgba(0, 20, 56, 0.06);
+    a {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin: auto;
+      color: #ffdd88;
+      text-decoration: none;
+      p {
+        margin: 0;
+      }
+    }
+  }
+}
