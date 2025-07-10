@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-flashcards',
-  templateUrl: './flashcards.page.html',
-  styleUrls: ['./flashcards.page.scss'],
+  selector: 'app-flashcard',
+  templateUrl: './flashcard.page.html',
+  styleUrls: ['./flashcard.page.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule],
 })

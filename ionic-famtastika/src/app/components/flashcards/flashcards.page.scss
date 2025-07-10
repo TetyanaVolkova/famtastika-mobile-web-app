@@ -1,11 +1,65 @@
 :host {
   .card-deck {
-    position: relative;
-    width: min(300px, 80%);
-    height: min(460px, 75%);
-    margin: 40px auto;
+    min-height: 41rem;
   }
 
+  @media (max-width: 1200px) {
+    .card-deck {
+      min-height: 41rem;
+    }
+  }
+  @media (max-width: 800px) {
+    .card-deck {
+      min-height: 39rem;
+    }
+  }
+  @media (max-width: 600px) {
+    .card-deck {
+      min-height: 33rem;
+    }
+  }
+  @media (max-width: 435px) {
+    .card-deck {
+      min-height: 35rem;
+    }
+  }
+  @media (max-width: 400px) {
+    .card-deck {
+      min-height: 32rem;
+    }
+  }
+  @media (max-width: 389px) {
+    .card-deck {
+      min-height: 29rem;
+    }
+  }
+
+  ion-card {
+    padding: 20px 0;
+  }
+  #shuffle_button_row {
+    position: relative;
+    z-index: 999;
+  }
+  .card-deck {
+    // min-height: 30.5rem;
+    margin: 20px auto;
+  }
+
+  ion-col {
+    text-align: center;
+  }
+
+  #card_container {
+    max-width: 450px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  #content_description {
+    text-align: start;
+    padding: 20px;
+  }
   .swipe-card {
     position: absolute;
     width: 100%;
@@ -42,8 +96,8 @@
     backface-visibility: hidden;
 
     img {
-      width: 100%;
-      height: 100%;
+      width: min(85%, 400px);
+      height: auto;
       object-fit: cover;
       border-radius: 20px;
     }
