@@ -6,8 +6,18 @@
     <ion-title>
       <div id="title_content_wrapper">
         <img src="assets/img/logo_1 1.svg" alt="logo" />
-        <span>Flashcards</span>
       </div>
     </ion-title>
+    <ion-select
+      class="no_underline"
+      slot="end"
+      interface="popover"
+      [(ngModel)]="selectedLanguage"
+      (ionChange)="switchLanguage($event.detail.value)"
+    >
+      <ion-select-option *ngFor="let lang of languages" [value]="lang.code">
+        {{ lang.label }}
+      </ion-select-option>
+    </ion-select>
   </ion-toolbar>
 </ion-header>

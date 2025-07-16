@@ -42,3 +42,38 @@ ion-app {
     top: 30px;
   }
 }
+::ng-deep ion-select .select-highlight {
+  display: none !important;
+}
+
+ion-select {
+  --highlight-color: transparent !important;
+  --highlight-height: 0px !important;
+}
+::ng-deep .popover-content {
+  width: 130px !important;
+}
+::ng-deep .ion-select-popover ion-item {
+  font-size: 14px;
+  padding: 6px 12px;
+}
+
+ion-select::part(icon) {
+  display: none; // optional - hides the dropdown arrow
+}
+
+ion-select::part(text) {
+  font-size: 14px;
+}
+
+ion-popover::part(content) {
+  width: 90px !important;
+  right: 20px !important;
+  top: 60px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.item-radio-checked.sc-ion-select-popover-md {
+  --background: #ffcc00 !important;
+}

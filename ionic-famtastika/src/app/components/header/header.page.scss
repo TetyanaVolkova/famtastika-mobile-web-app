@@ -2,16 +2,22 @@
   ion-header {
     display: flex;
     height: 60px;
+    ion-toolbar {
+      display: flex;
+      flex-direction: row;
+      ion-select {
+        right: 20px;
+      }
+    }
     #title_content_wrapper {
       display: flex;
       img {
         margin: auto 10px;
         height: 55px;
       }
-      span {
-        margin: auto;
-        height: 100%;
-      }
     }
+  }
+  ion-select::part(icon) {
+    color: #ab4600; /* Customize arrow color */
   }
 }

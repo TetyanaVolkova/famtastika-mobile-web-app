@@ -38,6 +38,7 @@
         <ion-card id="card_container" *ngIf="instructions">
           <ion-card-title>{{ instructions.title }}</ion-card-title>
           <ion-card-content
+            [appHighlight]="'lightblue'"
             id="content_description"
             [innerHTML]="instructions.description"
           ></ion-card-content>

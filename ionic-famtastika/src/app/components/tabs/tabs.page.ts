@@ -7,7 +7,12 @@ import {
   IonLabel,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { layersOutline, bookOutline, peopleOutline } from 'ionicons/icons';
+import {
+  layersOutline,
+  bookOutline,
+  peopleOutline,
+  fileTrayFullOutline,
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-tabs',
@@ -19,6 +24,11 @@ export class TabsPage {
   public environmentInjector = inject(EnvironmentInjector);
 
   constructor() {
-    addIcons({ layersOutline, bookOutline, peopleOutline });
+    addIcons({
+      layersOutline,
+      bookOutline,
+      peopleOutline,
+      fileTrayFullOutline,
+    });
   }
 }

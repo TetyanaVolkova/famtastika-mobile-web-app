@@ -7,7 +7,12 @@ import {
   IonToolbar,
   IonButtons,
   IonBackButton,
+  IonSelect,
+  IonSelectOption,
+  IonIcon,
 } from '@ionic/angular/standalone';
+import { MatIconModule } from '@angular/material/icon';
+import { LanguageService } from './language.service';
 
 @Component({
   selector: 'app-header',
@@ -22,10 +27,23 @@ import {
     IonToolbar,
     CommonModule,
     FormsModule,
+    IonSelect,
+    IonSelectOption,
+    MatIconModule,
   ],
 })
-export class HeaderPage implements OnInit {
-  constructor() {}
+export class HeaderPage {
+  languages = [
+    { code: 'en', label: 'EN', lang: 'English' },
+    { code: 'ru', label: 'RU', lang: 'Русский' },
+    { code: 'es', label: 'ES', lang: 'Español' },
+  ];
+  selectedLanguage: 'en' | 'ru' | 'es' = 'en';
+  constructor(private languageService: LanguageService) {
+    this.languageService.getCurrentLang();
+  }
 
-  ngOnInit() {}
+  switchLanguage(lang: string) {
+    this.languageService.setLanguage(lang);
+  }
 }

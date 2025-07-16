@@ -19,7 +19,9 @@ import {
   IonCardTitle,
 } from '@ionic/angular/standalone';
 import { HttpService } from 'src/app/services/http.service';
-import { forkJoin, Subject, takeUntil } from 'rxjs';
+import { forkJoin, Subject, switchMap, takeUntil } from 'rxjs';
+import { HighlightDirective } from 'src/app/directives/highlight.directive';
+import { LanguageService } from '../header/language.service';
 
 @Component({
   selector: 'app-flashcards',
@@ -37,33 +39,39 @@ import { forkJoin, Subject, takeUntil } from 'rxjs';
     IonButton,
     CommonModule,
     FormsModule,
+    HighlightDirective,
   ],
 })
 export class FlashcardsPage implements OnInit, OnDestroy {
   @ViewChildren('cardRef', { read: ElementRef })
   cardRefs!: QueryList<ElementRef>;
 
-  selectedLanguage: 'ru' | 'en' = 'ru';
+  selectedLanguage: 'ru' | 'en' = 'en';
   instructions!: { title: string; description: string };
 
   cards: { front: string; back: string; flipped: boolean }[] = [];
 
   private destroy$ = new Subject<void>();
 
-  constructor(private http: HttpService) {}
+  constructor(
+    private http: HttpService,
+    private languageService: LanguageService
+  ) {}
 
-  ngOnInit(): void {
-    forkJoin({
-      cards: this.http.fetchCardsWithImages(this.selectedLanguage),
-      instructions: this.http.fetchInstructions(this.selectedLanguage),
-    })
-      .pipe(takeUntil(this.destroy$))
+  ngOnInit() {
+    this.languageService
+      .getLanguage()
+      .pipe(
+        switchMap((lang) =>
+          forkJoin({
+            cards: this.http.fetchCardsWithImages(lang),
+            instructions: this.http.fetchInstructions(lang),
+          })
+        ),
+        takeUntil(this.destroy$)
+      )
       .subscribe(({ cards, instructions }) => {
-        console.log('Fetched cards:', cards);
-        this.cards = cards.map((card) => ({
-          ...card,
-          flipped: false,
-        }));
+        this.cards = cards.map((card) => ({ ...card, flipped: false }));
         this.instructions = instructions;
       });
   }
