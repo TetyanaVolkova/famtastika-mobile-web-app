@@ -10,6 +10,26 @@ provider:
   environment:
     CLIENT_ID: ${ssm:/CLIENT_ID} # securely fetch from the parameter's store AWS Systems Manager
     REGION: "us-east-1"
+  iamRoleStatements: # Grant IAM permissions to Lambda
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+      Resource:
+        - arn:aws:dynamodb:us-east-1:330042664487:table/Users
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table # Define a dynamo table resource
+      Properties:
+        TableName: Users # Name of the table where users going to be stored
+        BillingMode: PAY_PER_REQUEST # Automatically scales read/write capacity base on usage
+        AttributeDefinitions:
+          - AttributeName: userId # The partition key(unique identifier for each user)
+            AttributeType: S # String data type
+        KeySchema:
+          - AttributeName: userId # Defines userId as a primary key
+            KeyType: HASH # HASH indicates the partition's key
 
 functions:
   signUp:

@@ -1,5 +1,4 @@
 // Import the required AWS Cognito SDK
-
 const {
   CognitoIdentityProviderClient,
   ConfirmSignUpCommand,
@@ -26,7 +25,6 @@ exports.confirmSignUp = async (event) => {
   try {
     const command = new ConfirmSignUpCommand(params);
     await client.send(command);
-
     // Return success response to client
     return {
       statusCode: 200,

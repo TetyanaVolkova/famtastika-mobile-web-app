@@ -1,3 +1,5 @@
+const UserModel = require("../models/UserModel");
+
 // Import the required AWS Cognito SDK
 
 const {
@@ -41,6 +43,10 @@ async function signUp(event) {
     const command = new SignUpCommand(params);
     // Execute the sign-up request
     await client.send(command);
+
+    // Save user in DynamoDB after Cognito sign-in succeeds
+    const newUser = new UserModel(email, fullName);
+    await newUser.save();
 
     // Return success response to client
     return {
