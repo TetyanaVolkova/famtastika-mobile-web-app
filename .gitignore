@@ -1,4 +1,7 @@
 node-flashcard-uploader
+bannerService
+categoryService
+productService
 server-famtastika/.env
 server-famtastika/node_modules
 SVGs
