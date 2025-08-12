@@ -1,0 +1,38 @@
+org: tetyana
+service: serverless-server-famtastika
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+  environment:
+    CLOUDFRONT_URL: https://d31aryko38q4pa.cloudfront.net
+    SECRET_HEADER: famtastika123
+  httpApi:
+    cors:
+      allowedOrigins:
+        - "*"
+      allowedHeaders:
+        - Content-Type
+        - Referer
+        - X-Amz-Date
+        - Authorization
+        - X-Api-Key
+        - X-Amz-Security-Token
+      allowedMethods:
+        - GET
+        - OPTIONS
+      allowCredentials: false
+  apiGateway:
+    binaryMediaTypes:
+      - image/webp
+      - image/png
+      - image/jpeg
+
+functions:
+  getCardFile:
+    handler: handlers/cardsService.cardsService
+    events:
+      - httpApi:
+          path: /api/cards/{lang}/{fileName}
+          method: GET

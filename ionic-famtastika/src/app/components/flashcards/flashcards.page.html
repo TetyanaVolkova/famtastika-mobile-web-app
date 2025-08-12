@@ -3,7 +3,7 @@
     <!-- Card deck -->
     <ion-row>
       <ion-col>
-        <div class="card-deck">
+        <div class="card-deck" *ngIf="cards.length">
           <div
             class="swipe-card"
             *ngFor="let card of cards; let i = index"
@@ -35,10 +35,12 @@
     <!-- Instructions -->
     <ion-row>
       <ion-col>
-        <ion-card id="card_container" *ngIf="instructions">
+        <ion-card
+          id="card_container"
+          *ngIf="instructions$ | async as instructions"
+        >
           <ion-card-title>{{ instructions.title }}</ion-card-title>
           <ion-card-content
-            [appHighlight]="'lightblue'"
             id="content_description"
             [innerHTML]="instructions.description"
           ></ion-card-content>
