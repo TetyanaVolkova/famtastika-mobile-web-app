@@ -10,6 +10,11 @@ import {
   retry,
   mergeMap,
   from,
+  finalize,
+  startWith,
+  tap,
+  scan,
+  Observable,
 } from 'rxjs';
 
 export interface Card {
@@ -20,6 +25,9 @@ export interface Card {
 
 @Injectable({ providedIn: 'root' })
 export class HttpService {
+  fetchImage(imageUrl: any) {
+    throw new Error('Method not implemented.');
+  }
   private baseUrl =
     // 'https://evoecyur01.execute-api.us-east-1.amazonaws.com/api/cards';
     'https://qucprd0kuf.execute-api.us-east-1.amazonaws.com/api/cards';
@@ -85,6 +93,88 @@ export class HttpService {
         catchError((err) => {
           console.error('❌ Failed to load index.json:', err);
           return of([]);
+        })
+      );
+  }
+
+  fetchCardsWithImagesStream(lang: string): Observable<Card[]> {
+    if (this.cardsCache.has(lang)) {
+      return of(this.cardsCache.get(lang)!);
+    }
+
+    let latest: Card[] = [];
+
+    return this.http
+      .get<{ cards: Card[] }>(`${this.baseUrl}/${lang}/index.json`)
+      .pipe(
+        map((res) =>
+          res.cards.map(
+            (c, i) => ({ ...c, __idx: i } as Card & { __idx: number })
+          )
+        ),
+        switchMap((cardsWithIdx) =>
+          from(cardsWithIdx).pipe(
+            mergeMap(
+              (card) => {
+                const front$ = this.http
+                  .get(`${this.baseUrl}/${lang}/${card.front}`, {
+                    responseType: 'arraybuffer',
+                  })
+                  .pipe(retry(1));
+
+                const back$ = this.http
+                  .get(`${this.baseUrl}/${lang}/${card.back}`, {
+                    responseType: 'arraybuffer',
+                  })
+                  .pipe(retry(1));
+
+                return forkJoin([front$, back$]).pipe(
+                  map(
+                    ([frontData, backData]) =>
+                      ({
+                        id: card.id,
+                        front: this.arrayBufferToUrl(frontData, 'image/webp'),
+                        back: this.arrayBufferToUrl(backData, 'image/webp'),
+                        __idx: card.__idx,
+                      } as Card & { __idx: number })
+                  ),
+                  catchError((err) => {
+                    console.error(`❌ Failed to load card ${card.id}:`, err);
+                    // Skip this one but keep stream flowing
+                    return of(
+                      null as unknown as (Card & { __idx: number }) | null
+                    );
+                  })
+                );
+              },
+              2 // concurrency: tweak as needed
+            ),
+            // Build a sparse array in correct order as results arrive
+            scan((acc, next) => {
+              if (!next) return acc;
+              const arr = acc.slice();
+              arr[next.__idx] = {
+                id: next.id,
+                front: next.front,
+                back: next.back,
+              } as Card;
+              return arr;
+            }, [] as (Card | undefined)[]),
+            // Collapse holes (failed/not-yet-finished) for a clean emitted list
+            map((arr) => arr.filter(Boolean) as Card[]),
+            startWith([] as Card[]),
+            tap((arr) => {
+              latest = arr;
+            })
+          )
+        ),
+        finalize(() => {
+          // cache the last complete snapshot we saw
+          this.cardsCache.set(lang, latest);
+        }),
+        catchError((err) => {
+          console.error('❌ Failed to load index.json:', err);
+          return of([] as Card[]);
         })
       );
   }

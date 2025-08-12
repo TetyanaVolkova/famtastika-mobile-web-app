@@ -5,6 +5,7 @@ import {
   OnDestroy,
   QueryList,
   ViewChildren,
+  TrackByFunction,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,9 +20,31 @@ import {
   IonCardTitle,
 } from '@ionic/angular/standalone';
 import { HttpService } from 'src/app/services/http.service';
-import { forkJoin, Subject, switchMap, takeUntil } from 'rxjs';
-import { HighlightDirective } from 'src/app/directives/highlight.directive';
+import {
+  BehaviorSubject,
+  catchError,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 import { LanguageService } from '../header/language.service';
+
+export interface CardWithFlip {
+  id: string;
+  front: string;
+  back: string;
+  flipped: boolean;
+}
+
+export interface Instructions {
+  title: string;
+  description: string;
+}
 
 @Component({
   selector: 'app-flashcards',
@@ -39,7 +62,6 @@ import { LanguageService } from '../header/language.service';
     IonButton,
     CommonModule,
     FormsModule,
-    HighlightDirective,
   ],
 })
 export class FlashcardsPage implements OnInit, OnDestroy {
@@ -47,9 +69,10 @@ export class FlashcardsPage implements OnInit, OnDestroy {
   cardRefs!: QueryList<ElementRef>;
 
   selectedLanguage: 'ru' | 'en' = 'en';
-  instructions!: { title: string; description: string };
 
-  cards: { front: string; back: string; flipped: boolean }[] = [];
+  lang$!: Observable<string>;
+  instructions$!: Observable<Instructions | null>;
+  cards: CardWithFlip[] = [];
 
   private destroy$ = new Subject<void>();
 
@@ -59,25 +82,34 @@ export class FlashcardsPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.languageService
-      .getLanguage()
+    this.lang$ = this.languageService.getLanguage().pipe(shareReplay(1));
+
+    this.lang$
       .pipe(
-        switchMap((lang) =>
-          forkJoin({
-            cards: this.http.fetchCardsWithImages(lang),
-            instructions: this.http.fetchInstructions(lang),
-          })
-        ),
+        switchMap((lang) => this.http.fetchCardsWithImagesStream(lang)),
+        // add flipped flag here for the UI
+        map((cards) => {
+          return cards.map((card) => ({ ...card, flipped: false }));
+        }),
+        shareReplay(1),
         takeUntil(this.destroy$)
       )
-      .subscribe(({ cards, instructions }) => {
-        this.cards = cards.map((card) => ({ ...card, flipped: false }));
-        this.instructions = instructions;
+      .subscribe((cards) => {
+        this.cards = cards;
       });
+
+    this.instructions$ = this.lang$.pipe(
+      switchMap((lang) => this.http.fetchInstructions(lang)),
+      catchError(() => of(null)),
+      shareReplay(1)
+    );
   }
 
-  toggleFlip(index: number) {
-    this.cards[index].flipped = !this.cards[index].flipped;
+  // flip by index (immutably)
+  toggleFlip(i: number) {
+    this.cards = this.cards.map((c, idx) =>
+      idx === i ? { ...c, flipped: !c.flipped } : c
+    );
   }
 
   shuffle() {
@@ -114,6 +146,8 @@ export class FlashcardsPage implements OnInit, OnDestroy {
       this.cards.map((c) => c.flipped)
     );
   }
+
+  trackById: TrackByFunction<CardWithFlip> = (_i, item) => item.id;
 
   ngOnDestroy(): void {
     this.destroy$.next();
