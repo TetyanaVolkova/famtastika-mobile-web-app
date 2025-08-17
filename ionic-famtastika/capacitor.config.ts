@@ -2,7 +2,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'io.ionic.famtastika',
-  appName: 'ionic-famtastika',
+  appName: 'Famtastika',
   webDir: 'www',
 };
 

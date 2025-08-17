@@ -12,6 +12,7 @@ import {
   bookOutline,
   peopleOutline,
   fileTrayFullOutline,
+  personOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -28,6 +29,7 @@ export class TabsPage {
       layersOutline,
       bookOutline,
       peopleOutline,
+      personOutline,
       fileTrayFullOutline,
     });
   }

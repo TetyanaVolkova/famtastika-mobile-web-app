@@ -22,6 +22,11 @@ export const routes: Routes = [
           import('../tab3/tab3.page').then((m) => m.Tab3Page),
       },
       {
+        path: 'profile',
+        loadComponent: () =>
+          import('../auth/auth.component').then((m) => m.AuthComponent),
+      },
+      {
         path: '',
         redirectTo: '/tabs/flashcards',
         pathMatch: 'full',

@@ -3,6 +3,16 @@
     min-height: 41rem;
   }
 
+  #image_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 500px;
+    img {
+      animation: spin 2s linear infinite; /* spins every 2 seconds */
+    }
+  }
+
   @media (max-width: 1200px) {
     .card-deck {
       min-height: 41rem;
@@ -109,6 +119,20 @@
   ion-button {
     width: 90px;
     margin: auto;
+  }
+
+  .skeleton {
+    height: 100%;
+    width: 100%;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   @keyframes slideBack {

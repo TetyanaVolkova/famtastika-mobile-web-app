@@ -6,6 +6,8 @@ import {
   QueryList,
   ViewChildren,
   TrackByFunction,
+  AfterViewInit, // <-- added
+  NgZone, // <-- added
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -33,6 +35,8 @@ import {
   takeUntil,
 } from 'rxjs';
 import { LanguageService } from '../header/language.service';
+import { createGesture, Gesture } from '@ionic/core';
+import { FlashcardPage } from '../flashcard/flashcard.page'; // <-- added
 
 export interface CardWithFlip {
   id: string;
@@ -64,7 +68,8 @@ export interface Instructions {
     FormsModule,
   ],
 })
-export class FlashcardsPage implements OnInit, OnDestroy {
+export class FlashcardsPage implements OnInit, OnDestroy, AfterViewInit {
+  // <-- added AfterViewInit
   @ViewChildren('cardRef', { read: ElementRef })
   cardRefs!: QueryList<ElementRef>;
 
@@ -76,9 +81,15 @@ export class FlashcardsPage implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
+  // === Native swipe bits ===
+  private topGesture?: Gesture; // <-- added
+  private readonly swipeThreshold = 100; // <-- added (px to count as swipe)
+  // =========================
+
   constructor(
     private http: HttpService,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private ngZone: NgZone // <-- added
   ) {}
 
   ngOnInit() {
@@ -104,6 +115,59 @@ export class FlashcardsPage implements OnInit, OnDestroy {
       shareReplay(1)
     );
   }
+
+  // === Attach native finger slide to the TOP card ===
+  ngAfterViewInit() {
+    this.attachTopCardGesture();
+
+    this.cardRefs.changes
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.attachTopCardGesture());
+  }
+
+  private attachTopCardGesture() {
+    // cleanup previous
+    this.topGesture?.destroy();
+
+    const topEl = this.cardRefs.first?.nativeElement as HTMLElement | undefined;
+    if (!topEl) return;
+
+    // Encourage browsers to treat horizontal as custom; vertical scroll still allowed
+    topEl.style.touchAction = 'pan-y';
+
+    let startX = 0;
+
+    this.topGesture = createGesture({
+      el: topEl,
+      gestureName: 'card-swipe',
+      threshold: 0, // begin immediately
+      gesturePriority: 100, // win against content scroll when horizontal
+      disableScroll: true, // prevent IonContent from hijacking during gesture
+      onStart: (ev: any) => {
+        startX = ev.currentX;
+      },
+      onMove: (_ev: any) => {
+        // Keeping visuals driven by your existing CSS classes (.moving-out/.moving-in)
+        // If you want the card to follow the finger, we can add transform here later.
+      },
+      onEnd: (ev: any) => {
+        const dx = ev.currentX - startX;
+        const swipedRight = dx > this.swipeThreshold || ev.velocityX > 0.35;
+
+        if (swipedRight) {
+          // Call your existing animation + reorder
+          this.ngZone.run(() => this.shuffle());
+
+          // Reattach to new top after DOM updates
+          setTimeout(() => this.attachTopCardGesture(), 10);
+        }
+        // else: do nothing; your (click) still flips
+      },
+    });
+
+    this.topGesture.enable(true);
+  }
+  // ================================================
 
   // flip by index (immutably)
   toggleFlip(i: number) {
@@ -150,6 +214,7 @@ export class FlashcardsPage implements OnInit, OnDestroy {
   trackById: TrackByFunction<CardWithFlip> = (_i, item) => item.id;
 
   ngOnDestroy(): void {
+    this.topGesture?.destroy(); // <-- added cleanup
     this.destroy$.next();
     this.destroy$.complete();
   }
