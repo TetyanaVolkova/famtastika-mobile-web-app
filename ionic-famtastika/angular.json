@@ -23,7 +23,7 @@
               "browser": ""
             },
             "index": "src/index.html",
-            "polyfills": ["src/polyfills.ts"],
+            "polyfills": ["zone.js", "src/polyfills.ts"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -33,7 +33,12 @@
                 "output": "assets"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": [
+              "node_modules/@aws-amplify/ui-angular/theme.css",
+              "src/global.scss",
+              "src/theme/variables.scss",
+              "node_modules/@aws-amplify/ui-angular/theme.css"
+            ],
             "scripts": [],
             "browser": "src/main.ts"
           },
@@ -110,7 +115,12 @@
                 "output": "assets"
               }
             ],
-            "styles": ["src/global.scss", "src/theme/variables.scss"],
+            "styles": [
+              "node_modules/@aws-amplify/ui-angular/theme.css",
+              "src/global.scss",
+              "src/theme/variables.scss",
+              "node_modules/@aws-amplify/ui-angular/theme.css"
+            ],
             "scripts": []
           },
           "configurations": {

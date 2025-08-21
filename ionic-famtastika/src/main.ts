@@ -13,12 +13,9 @@ import { provideHttpClient } from '@angular/common/http';
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
+import { AmplifyAuthenticatorModule } from '@aws-amplify/ui-angular';
+import { appConfig } from './app/app.config';
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    provideHttpClient(),
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    provideIonicAngular(),
-    provideRouter(routes, withPreloading(PreloadAllModules)),
-  ],
-});
+bootstrapApplication(AppComponent, appConfig).catch((err) =>
+  console.error(err)
+);

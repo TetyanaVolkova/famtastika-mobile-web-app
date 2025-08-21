@@ -1,0 +1,42 @@
+<ion-grid>
+  <ion-row>
+    <ion-col>
+      <ion-avatar>
+        <img
+          alt="Silhouette of a person's head"
+          src="https://ionicframework.com/docs/img/demos/avatar.svg"
+        />
+      </ion-avatar>
+      <ion-item>
+        <ion-label>
+          <h2>Welcome {{ (authService.fullName$ | async) ?? "there" }}!</h2>
+
+          @if (authService.isSubscribed$ | async) {
+          <p>You have an active subscription</p>
+          } @else {
+          <p>You do not have any active subscription</p>
+          }
+        </ion-label>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-item>
+        <ion-label>
+          <h1>Subscription Details</h1>
+          @if (authService.isSubscribed$ | async) {
+          <p>You are a member since {{ subscribedAt }}</p>
+          } @else {
+          <p>You are not a member</p>
+          }
+        </ion-label>
+      </ion-item>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col>
+      <ion-button expand="block" (click)="signOut()">Sign Out</ion-button>
+    </ion-col>
+  </ion-row>
+</ion-grid>

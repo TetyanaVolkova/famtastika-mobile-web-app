@@ -36,6 +36,25 @@
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
 
+/* Import Amplify styles */
+@import "@aws-amplify/ui/dist/styles.css";
+
+.amplify-button--primary {
+  background: var(--ion-color-primary) !important;
+  color: var(--ion-color-primary-contrast) !important;
+}
+.amplify-button--primary:hover {
+  background: var(--ion-color-primary);
+}
+
+.amplify-tabs__item--active {
+  color: var(--ion-color-primary-contrast) !important;
+}
+
+.amplify-tabs__item--active {
+  border-color: var(--ion-color-primary-contrast) !important;
+}
+
 ion-app {
   display: flex;
   ion-router-outlet {
