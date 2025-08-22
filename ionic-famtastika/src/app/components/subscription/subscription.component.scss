@@ -2,7 +2,19 @@
   ion-avatar {
     margin: auto;
   }
-  ion-item {
+  ion-item,
+  ion-col,
+  ion-segment-content {
     text-align: center;
+  }
+  .icon_label {
+    text-align: start;
+  }
+  .list_icon {
+    margin-right: 8px;
+  }
+  ion-avatar {
+    width: 45px;
+    height: 45px;
   }
 }

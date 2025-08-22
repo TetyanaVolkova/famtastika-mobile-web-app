@@ -177,11 +177,6 @@ export class FlashcardsPage implements OnInit, OnDestroy, AfterViewInit {
   }
 
   shuffle() {
-    console.log(
-      'Card flip state before shuffle:',
-      this.cards.map((c) => c.flipped)
-    );
-
     const cardEls = this.cardRefs.toArray();
     const topCardEl = cardEls[0]?.nativeElement;
     if (!topCardEl) return;
@@ -205,10 +200,6 @@ export class FlashcardsPage implements OnInit, OnDestroy, AfterViewInit {
         }, 400);
       }
     }, 400);
-    console.log(
-      'Card flip state before shuffle:',
-      this.cards.map((c) => c.flipped)
-    );
   }
 
   trackById: TrackByFunction<CardWithFlip> = (_i, item) => item.id;

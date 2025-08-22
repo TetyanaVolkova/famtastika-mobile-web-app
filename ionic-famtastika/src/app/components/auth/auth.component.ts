@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SubscriptionComponent } from '../subscription/subscription.component';
 import { AmplifyAuthenticatorModule } from '@aws-amplify/ui-angular';
-import { IonButton, IonContent } from '@ionic/angular/standalone';
+import { IonContent } from '@ionic/angular/standalone';
 import { AuthService } from './auth.service';
 
 @Component({
@@ -15,7 +15,6 @@ import { AuthService } from './auth.service';
     FormsModule,
     AmplifyAuthenticatorModule,
     IonContent,
-    IonButton,
     SubscriptionComponent,
   ],
 })

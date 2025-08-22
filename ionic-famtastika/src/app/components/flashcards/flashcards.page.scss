@@ -50,6 +50,8 @@
   #shuffle_button_row {
     position: relative;
     z-index: 999;
+    width: 80%;
+    margin: auto;
   }
   .card-deck {
     // min-height: 30.5rem;
@@ -117,7 +119,7 @@
     transform: rotateY(180deg);
   }
   ion-button {
-    width: 90px;
+    width: 120px;
     margin: auto;
   }
 

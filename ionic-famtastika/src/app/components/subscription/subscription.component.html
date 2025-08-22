@@ -12,20 +12,6 @@
           <h2>Welcome {{ (authService.fullName$ | async) ?? "there" }}!</h2>
 
           @if (authService.isSubscribed$ | async) {
-          <p>You have an active subscription</p>
-          } @else {
-          <p>You do not have any active subscription</p>
-          }
-        </ion-label>
-      </ion-item>
-    </ion-col>
-  </ion-row>
-  <ion-row>
-    <ion-col>
-      <ion-item>
-        <ion-label>
-          <h1>Subscription Details</h1>
-          @if (authService.isSubscribed$ | async) {
           <p>You are a member since {{ subscribedAt }}</p>
           } @else {
           <p>You are not a member</p>
@@ -34,9 +20,162 @@
       </ion-item>
     </ion-col>
   </ion-row>
-  <ion-row>
-    <ion-col>
-      <ion-button expand="block" (click)="signOut()">Sign Out</ion-button>
-    </ion-col>
-  </ion-row>
+
+  <ion-segment>
+    <ion-segment-button value="monthly" content-id="monthly">
+      Monthly billing
+    </ion-segment-button>
+    <ion-segment-button value="annual" content-id="annual">
+      Annual billing
+    </ion-segment-button>
+  </ion-segment>
+  <ion-segment-view>
+    <ion-segment-content id="monthly">
+      <br />
+      <ion-chip color="primary" className="ion-margin-top"
+        >Monthly Plan</ion-chip
+      >
+      <ion-text>
+        <h2>$10/monthly</h2>
+      </ion-text>
+      <ion-text color="medium">Unsubscribe anytime</ion-text>
+
+      <ion-button expand="block" (click)="subscribe()"> Subscribe </ion-button>
+      <ion-list className="ion-margin-top" lines="none">
+        <ion-item>
+          <ion-icon
+            class="list_icon"
+            name="checkmark-circle-outline"
+            slot="start"
+            color="success"
+            size="small"
+          ></ion-icon>
+          <ion-label class="icon_label">Access to all cards</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon
+            class="list_icon"
+            name="checkmark-circle-outline"
+            slot="start"
+            color="success"
+            size="small"
+          ></ion-icon>
+          <ion-label class="icon_label"
+            >We are adding new cards regularly</ion-label
+          >
+        </ion-item>
+        <ion-item>
+          <ion-icon
+            class="list_icon"
+            name="checkmark-circle-outline"
+            slot="start"
+            color="success"
+            size="small"
+          ></ion-icon>
+          <ion-label class="icon_label">Access to daily affirmations</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon
+            class="list_icon"
+            name="checkmark-circle-outline"
+            slot="start"
+            color="success"
+            size="small"
+          ></ion-icon>
+          <ion-label class="icon_label">Access to all card decks</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon
+            class="list_icon"
+            name="checkmark-circle-outline"
+            slot="start"
+            color="success"
+            size="small"
+          ></ion-icon>
+          <ion-label class="icon_label"
+            >We support multiple languages</ion-label
+          >
+        </ion-item>
+      </ion-list>
+    </ion-segment-content>
+    <ion-segment-content id="annual">
+      <br />
+      <ion-chip color="primary" className="ion-margin-top"
+        >Annual Plan</ion-chip
+      >
+      <ion-text>
+        <h2>$100/annual</h2>
+      </ion-text>
+      <ion-text color="medium">Save with annual subscription</ion-text>
+
+      <ion-button expand="block" (click)="subscribe()"> Subscribe </ion-button>
+      <ion-list className="ion-margin-top" lines="none">
+        <ion-item>
+          <ion-icon
+            class="list_icon"
+            name="checkmark-circle-outline"
+            slot="start"
+            color="success"
+            size="small"
+          ></ion-icon>
+          <ion-label class="icon_label">Save 20% compared to monthly</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon
+            class="list_icon"
+            name="checkmark-circle-outline"
+            slot="start"
+            color="success"
+            size="small"
+          ></ion-icon>
+          <ion-label class="icon_label">Access to all cards</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon
+            class="list_icon"
+            name="checkmark-circle-outline"
+            slot="start"
+            color="success"
+            size="small"
+          ></ion-icon>
+          <ion-label class="icon_label"
+            >We are adding new cards regularly</ion-label
+          >
+        </ion-item>
+        <ion-item>
+          <ion-icon
+            class="list_icon"
+            name="checkmark-circle-outline"
+            slot="start"
+            color="success"
+            size="small"
+          ></ion-icon>
+          <ion-label class="icon_label">Access to daily affirmations</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon
+            class="list_icon"
+            name="checkmark-circle-outline"
+            slot="start"
+            color="success"
+            size="small"
+          ></ion-icon>
+          <ion-label class="icon_label">Access to all card decks</ion-label>
+        </ion-item>
+        <ion-item>
+          <ion-icon
+            class="list_icon"
+            name="checkmark-circle-outline"
+            slot="start"
+            color="success"
+            size="small"
+          ></ion-icon>
+          <ion-label class="icon_label"
+            >We support multiple languages</ion-label
+          >
+        </ion-item>
+      </ion-list>
+    </ion-segment-content>
+  </ion-segment-view>
+  <ion-button expand="block" (click)="signOut()">Sign Out</ion-button>
 </ion-grid>
