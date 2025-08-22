@@ -14,7 +14,7 @@
             class="swipe-card"
             [class.flipped]="card.flipped"
             [style.zIndex]="cards.length - i"
-            (click)="toggleFlip(i)"
+            (click)="toggleFlip()"
             #cardRef
           >
             <div class="flip-card">
@@ -38,7 +38,7 @@
         <ion-button expand="block" (click)="shuffle()">Shuffle</ion-button>
       </ion-col>
       <ion-col>
-        <ion-button expand="block" (click)="shuffle()">Flip card</ion-button>
+        <ion-button expand="block" (click)="toggleFlip()">Flip card</ion-button>
       </ion-col>
     </ion-row>
 

@@ -50,7 +50,7 @@
   #shuffle_button_row {
     position: relative;
     z-index: 999;
-    width: 80%;
+    width: min(80%, 500px);
     margin: auto;
   }
   .card-deck {
@@ -144,5 +144,21 @@
     to {
       transform: translateX(0) rotate(0);
     }
+  }
+}
+.swipe-card.moving-out-left {
+  transform: translateX(-150%) rotate(-25deg);
+}
+/* mirror of .moving-in but from the left */
+.swipe-card.moving-in-left {
+  animation: slideBackLeft 0.4s ease forwards;
+}
+
+@keyframes slideBackLeft {
+  from {
+    transform: translateX(-150%) rotate(-25deg);
+  }
+  to {
+    transform: translateX(0) rotate(0);
   }
 }
