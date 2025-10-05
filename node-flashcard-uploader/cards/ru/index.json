@@ -1,0 +1,95 @@
+{
+  "instructionsPath": "instructions.json",
+  "cards": [
+    {
+      "id": "card1",
+      "front": "card1_front.webp",
+      "back": "card1_back.webp"
+    },
+    {
+      "id": "card2",
+      "front": "card2_front.webp",
+      "back": "card2_back.webp"
+    },
+    {
+      "id": "card3",
+      "front": "card3_front.webp",
+      "back": "card3_back.webp"
+    },
+    {
+      "id": "card4",
+      "front": "card4_front.webp",
+      "back": "card4_back.webp"
+    },
+    {
+      "id": "card5",
+      "front": "card5_front.webp",
+      "back": "card5_back.webp"
+    },
+    {
+      "id": "card6",
+      "front": "card6_front.webp",
+      "back": "card6_back.webp"
+    },
+    {
+      "id": "card7",
+      "front": "card7_front.webp",
+      "back": "card7_back.webp"
+    },
+    {
+      "id": "card8",
+      "front": "card8_front.webp",
+      "back": "card8_back.webp"
+    },
+    {
+      "id": "card9",
+      "front": "card9_front.webp",
+      "back": "card9_back.webp"
+    },
+    {
+      "id": "card10",
+      "front": "card10_front.webp",
+      "back": "card10_back.webp"
+    },
+    {
+      "id": "card11",
+      "front": "card11_front.webp",
+      "back": "card11_back.webp"
+    },
+    {
+      "id": "card12",
+      "front": "card12_front.webp",
+      "back": "card12_back.webp"
+    },
+    {
+      "id": "card13",
+      "front": "card13_front.webp",
+      "back": "card13_back.webp"
+    },
+    {
+      "id": "card14",
+      "front": "card14_front.webp",
+      "back": "card14_back.webp"
+    },
+    {
+      "id": "card15",
+      "front": "card15_front.webp",
+      "back": "card15_back.webp"
+    },
+    {
+      "id": "card16",
+      "front": "card16_front.webp",
+      "back": "card16_back.webp"
+    },
+    {
+      "id": "card17",
+      "front": "card17_front.webp",
+      "back": "card17_back.webp"
+    },
+    {
+      "id": "card18",
+      "front": "card18_front.webp",
+      "back": "card18_back.webp"
+    }
+  ]
+}
