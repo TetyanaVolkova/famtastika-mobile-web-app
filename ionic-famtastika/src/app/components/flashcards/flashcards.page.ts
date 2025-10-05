@@ -23,9 +23,7 @@ import {
 } from '@ionic/angular/standalone';
 import { HttpService } from 'src/app/services/http.service';
 import {
-  BehaviorSubject,
   catchError,
-  forkJoin,
   map,
   Observable,
   of,
@@ -33,6 +31,7 @@ import {
   Subject,
   switchMap,
   takeUntil,
+  tap, // <<< add tap
 } from 'rxjs';
 import { LanguageService } from '../header/language.service';
 import { createGesture, Gesture } from '@ionic/core';
@@ -84,6 +83,8 @@ export class FlashcardsPage implements OnInit, OnDestroy, AfterViewInit {
   // === Native swipe bits ===
   private topGesture?: Gesture; // <-- added
   private readonly swipeThreshold = 100; // <-- added (px to count as swipe)
+  private readonly OUT_MS = 400;
+  private isAnimating = false;
   // =========================
 
   constructor(
@@ -97,11 +98,15 @@ export class FlashcardsPage implements OnInit, OnDestroy, AfterViewInit {
 
     this.lang$
       .pipe(
+        // <<< clear current deck immediately on language change
+        tap(() => {
+          this.cards = [];
+          this.topGesture?.destroy(); // avoid a gesture bound to a removed element
+          this.isAnimating = false;
+        }),
         switchMap((lang) => this.http.fetchCardsWithImages(lang)),
         // add flipped flag here for the UI
-        map((cards) => {
-          return cards.map((card) => ({ ...card, flipped: false }));
-        }),
+        map((cards) => cards.map((card) => ({ ...card, flipped: false }))),
         shareReplay(1),
         takeUntil(this.destroy$)
       )
@@ -147,10 +152,11 @@ export class FlashcardsPage implements OnInit, OnDestroy, AfterViewInit {
         startX = ev.currentX ?? ev.startX ?? 0;
       },
       onMove: (_ev: any) => {
-        // Keeping visuals driven by your existing CSS classes (.moving-out/.moving-in)
-        // If you want the card to follow the finger, we can add transform here later.
+        // Keeping visuals driven by existing CSS classes (.moving-out/.moving-in)
       },
       onEnd: (ev: any) => {
+        if (this.isAnimating || this.cards.length < 2) return;
+
         const endX = ev.currentX ?? ev.endX ?? startX;
         const dx = endX - startX;
         const vx = ev.velocityX ?? 0;
@@ -163,7 +169,7 @@ export class FlashcardsPage implements OnInit, OnDestroy, AfterViewInit {
             // existing animation: fly RIGHT, then rotate first -> back
             this.shuffle();
           } else if (swipedLeft) {
-            // new flow: fly LEFT, then rotate first -> back (same "next" effect)
+            // left flow: fly LEFT, then rotate first -> back (same "next" effect)
             this.shuffleLeft();
           }
         });
@@ -188,11 +194,12 @@ export class FlashcardsPage implements OnInit, OnDestroy, AfterViewInit {
 
   /** RIGHT swipe (or button Next): unchanged */
   shuffle() {
-    if (this.cards.length < 2) return;
+    if (this.cards.length < 2 || this.isAnimating) return;
 
     const topEl = this.cardRefs.first?.nativeElement as HTMLElement | undefined;
     if (!topEl) return;
 
+    this.isAnimating = true;
     topEl.classList.add('moving-out');
 
     setTimeout(() => {
@@ -211,18 +218,24 @@ export class FlashcardsPage implements OnInit, OnDestroy, AfterViewInit {
         // ensure no leftover from the other direction
         newTopEl.classList.remove('moving-in-left');
         newTopEl.classList.add('moving-in');
-        setTimeout(() => newTopEl.classList.remove('moving-in'), 400);
+        setTimeout(() => {
+          newTopEl.classList.remove('moving-in');
+          this.isAnimating = false;
+        }, this.OUT_MS);
+      } else {
+        this.isAnimating = false;
       }
-    }, 400);
+    }, this.OUT_MS);
   }
 
   /** LEFT swipe: fly out left, rotate, then come in from the LEFT */
   shuffleLeft() {
-    if (this.cards.length < 2) return;
+    if (this.cards.length < 2 || this.isAnimating) return;
 
     const topEl = this.cardRefs.first?.nativeElement as HTMLElement | undefined;
     if (!topEl) return;
 
+    this.isAnimating = true;
     topEl.classList.add('moving-out-left');
 
     setTimeout(() => {
@@ -241,9 +254,14 @@ export class FlashcardsPage implements OnInit, OnDestroy, AfterViewInit {
         // ensure no leftover from the other direction
         newTopEl.classList.remove('moving-in');
         newTopEl.classList.add('moving-in-left');
-        setTimeout(() => newTopEl.classList.remove('moving-in-left'), 400);
+        setTimeout(() => {
+          newTopEl.classList.remove('moving-in-left');
+          this.isAnimating = false;
+        }, this.OUT_MS);
+      } else {
+        this.isAnimating = false;
       }
-    }, 400);
+    }, this.OUT_MS);
   }
 
   trackById: TrackByFunction<CardWithFlip> = (_i, item) => item.id;
