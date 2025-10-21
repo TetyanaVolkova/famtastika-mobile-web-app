@@ -12,6 +12,11 @@ export const routes: Routes = [
           import('../flashcards/flashcards.page').then((m) => m.FlashcardsPage),
       },
       {
+        path: 'flashcard/:category/:theme/:deck/:lang',
+        loadComponent: () =>
+          import('../flashcard/flashcard.page').then((m) => m.FlashcardPage),
+      },
+      {
         path: 'tab2',
         loadComponent: () =>
           import('../tab2/tab2.page').then((m) => m.Tab2Page),

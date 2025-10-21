@@ -34,5 +34,5 @@ functions:
     handler: handlers/cardsService.cardsService
     events:
       - httpApi:
-          path: /api/cards/{lang}/{fileName}
+          path: /api/cards/{category}/{theme}/{deck}/{lang}/{fileName}
           method: GET

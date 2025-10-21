@@ -1,0 +1,47 @@
+{
+  "basePath": "cards",
+  "categories": [
+    {
+      "id": "man",
+      "label": "Man",
+      "themes": [
+        {
+          "id": "dad-with-kids",
+          "label": "Dad With Kids",
+          "decks": [
+            {
+              "id": "mighty-dad",
+              "label": "Mighty Dad",
+              "languages": [
+                "en",
+                "ru"
+              ]
+            }
+          ]
+        }
+      ],
+      "decks": []
+    },
+    {
+      "id": "self-growth",
+      "label": "Self Growth",
+      "themes": [
+        {
+          "id": "inner-journey",
+          "label": "Inner Journey",
+          "decks": [
+            {
+              "id": "key-to-new-self",
+              "label": "Key To New Self",
+              "languages": [
+                "en",
+                "ru"
+              ]
+            }
+          ]
+        }
+      ],
+      "decks": []
+    }
+  ]
+}

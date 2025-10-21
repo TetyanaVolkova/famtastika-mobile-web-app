@@ -1,0 +1,155 @@
+{
+  "instructionsPath": null,
+  "cards": [
+    {
+      "id": "card1",
+      "back": "card1_back.webp",
+      "front": "card1_front.webp"
+    },
+    {
+      "id": "card2",
+      "back": "card2_back.webp",
+      "front": "card2_front.webp"
+    },
+    {
+      "id": "card3",
+      "back": "card3_back.webp",
+      "front": "card3_front.webp"
+    },
+    {
+      "id": "card4",
+      "back": "card4_back.webp",
+      "front": "card4_front.webp"
+    },
+    {
+      "id": "card5",
+      "back": "card5_back.webp",
+      "front": "card5_front.webp"
+    },
+    {
+      "id": "card6",
+      "back": "card6_back.webp",
+      "front": "card6_front.webp"
+    },
+    {
+      "id": "card7",
+      "back": "card7_back.webp",
+      "front": "card7_front.webp"
+    },
+    {
+      "id": "card8",
+      "back": "card8_back.webp",
+      "front": "card8_front.webp"
+    },
+    {
+      "id": "card9",
+      "back": "card9_back.webp",
+      "front": "card9_front.webp"
+    },
+    {
+      "id": "card10",
+      "back": "card10_back.webp",
+      "front": "card10_front.webp"
+    },
+    {
+      "id": "card11",
+      "back": "card11_back.webp",
+      "front": "card11_front.webp"
+    },
+    {
+      "id": "card12",
+      "back": "card12_back.webp",
+      "front": "card12_front.webp"
+    },
+    {
+      "id": "card13",
+      "back": "card13_back.webp",
+      "front": "card13_front.webp"
+    },
+    {
+      "id": "card14",
+      "back": "card14_back.webp",
+      "front": "card14_front.webp"
+    },
+    {
+      "id": "card15",
+      "back": "card15_back.webp",
+      "front": "card15_front.webp"
+    },
+    {
+      "id": "card16",
+      "back": "card16_back.webp",
+      "front": "card16_front.webp"
+    },
+    {
+      "id": "card17",
+      "back": "card17_back.webp",
+      "front": "card17_front.webp"
+    },
+    {
+      "id": "card18",
+      "back": "card18_back.webp",
+      "front": "card18_front.webp"
+    },
+    {
+      "id": "card19",
+      "back": "card19_back.webp",
+      "front": "card19_front.webp"
+    },
+    {
+      "id": "card20",
+      "back": "card20_back.webp",
+      "front": "card20_front.webp"
+    },
+    {
+      "id": "card21",
+      "back": "card21_back.webp",
+      "front": "card21_front.webp"
+    },
+    {
+      "id": "card22",
+      "back": "card22_back.webp",
+      "front": "card22_front.webp"
+    },
+    {
+      "id": "card23",
+      "back": "card23_back.webp",
+      "front": "card23_front.webp"
+    },
+    {
+      "id": "card24",
+      "back": "card24_back.webp",
+      "front": "card24_front.webp"
+    },
+    {
+      "id": "card25",
+      "back": "card25_back.webp",
+      "front": "card25_front.webp"
+    },
+    {
+      "id": "card26",
+      "back": "card26_back.webp",
+      "front": "card26_front.webp"
+    },
+    {
+      "id": "card27",
+      "back": "card27_back.webp",
+      "front": "card27_front.webp"
+    },
+    {
+      "id": "card28",
+      "back": "card28_back.webp",
+      "front": "card28_front.webp"
+    },
+    {
+      "id": "card29",
+      "back": "card29_back.webp",
+      "front": "card29_front.webp"
+    },
+    {
+      "id": "card30",
+      "back": "card30_back.webp",
+      "front": "card30_front.webp"
+    }
+  ]
+}

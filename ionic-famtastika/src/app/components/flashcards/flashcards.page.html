@@ -2,59 +2,7 @@
   <ion-grid>
     <!-- Card deck -->
     <ion-row>
-      <ion-col>
-        @if (!cards.length) {
-        <div class="card-deck" id="image_container">
-          <img src="assets/img/logo_1 1.svg" />
-        </div>
-        } @else {
-        <div class="card-deck">
-          @for (card of cards; track card.id; let i = $index) {
-          <div
-            class="swipe-card"
-            [class.flipped]="card.flipped"
-            [style.zIndex]="cards.length - i"
-            (click)="toggleFlip()"
-            #cardRef
-          >
-            <div class="flip-card">
-              <div class="flip-card-front">
-                <img [src]="card.front" />
-              </div>
-              <div class="flip-card-back">
-                <img [src]="card.back" />
-              </div>
-            </div>
-          </div>
-          }
-        </div>
-        }
-      </ion-col>
-    </ion-row>
-
-    <!-- Shuffle Button -->
-    <ion-row id="shuffle_button_row">
-      <ion-col>
-        <ion-button expand="block" (click)="shuffle()">Shuffle</ion-button>
-      </ion-col>
-      <ion-col>
-        <ion-button expand="block" (click)="toggleFlip()">Flip card</ion-button>
-      </ion-col>
-    </ion-row>
-
-    <!-- Instructions -->
-    <ion-row>
-      <ion-col>
-        @if (instructions$ | async; as instructions) {
-        <ion-card id="card_container">
-          <ion-card-title>{{ instructions.title }}</ion-card-title>
-          <ion-card-content
-            id="content_description"
-            [innerHTML]="instructions.description"
-          ></ion-card-content>
-        </ion-card>
-        }
-      </ion-col>
+      <ion-col> test </ion-col>
     </ion-row>
   </ion-grid>
 </ion-content>

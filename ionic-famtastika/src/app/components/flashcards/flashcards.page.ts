@@ -67,7 +67,7 @@ export interface Instructions {
     FormsModule,
   ],
 })
-export class FlashcardsPage implements OnInit, OnDestroy, AfterViewInit {
+export class FlashcardsPage implements OnDestroy, AfterViewInit {
   // <-- added AfterViewInit
   @ViewChildren('cardRef', { read: ElementRef })
   cardRefs!: QueryList<ElementRef>;
@@ -92,34 +92,6 @@ export class FlashcardsPage implements OnInit, OnDestroy, AfterViewInit {
     private languageService: LanguageService,
     private ngZone: NgZone // <-- added
   ) {}
-
-  ngOnInit() {
-    this.lang$ = this.languageService.getLanguage().pipe(shareReplay(1));
-
-    this.lang$
-      .pipe(
-        // <<< clear current deck immediately on language change
-        tap(() => {
-          this.cards = [];
-          this.topGesture?.destroy(); // avoid a gesture bound to a removed element
-          this.isAnimating = false;
-        }),
-        switchMap((lang) => this.http.fetchCardsWithImages(lang)),
-        // add flipped flag here for the UI
-        map((cards) => cards.map((card) => ({ ...card, flipped: false }))),
-        shareReplay(1),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((cards) => {
-        this.cards = cards;
-      });
-
-    this.instructions$ = this.lang$.pipe(
-      switchMap((lang) => this.http.fetchInstructions(lang)),
-      catchError(() => of(null)),
-      shareReplay(1)
-    );
-  }
 
   // === Attach native finger slide to the TOP card ===
   ngAfterViewInit() {

@@ -1,45 +1,94 @@
+/* eslint-disable no-console */
 const fs = require("fs");
 const path = require("path");
 
 const root = path.join(__dirname, "cards");
-const allowedLangs = ["en", "ru", "es", "fr"];
 
-// Get only language folders that are allowed
-const languages = fs
-  .readdirSync(root)
-  .filter(
-    (f) =>
-      fs.statSync(path.join(root, f)).isDirectory() && allowedLangs.includes(f)
-  );
+// Configure languages; set to [] to accept any two-letter code
+const allowedLangs = ["en", "ru", "es", "fr"]; // or []
 
-languages.forEach((lang) => {
-  const folder = path.join(root, lang);
-  const files = fs.readdirSync(folder);
+const isTwoLetter = (s) => /^[a-z]{2}$/i.test(s);
+const isAllowedLang = (s) =>
+  isTwoLetter(s) && (allowedLangs.length === 0 || allowedLangs.includes(s));
+
+/**
+ * Recursively find all language leaf folders that match:
+ * cards/<category>/[<theme>/]<deck>/<lang>/
+ */
+function* findLangDirs(startDir) {
+  if (!fs.existsSync(startDir)) return;
+
+  const entries = fs.readdirSync(startDir, { withFileTypes: true });
+
+  // If current folder name itself is a lang folder, yield and stop descending
+  const base = path.basename(startDir);
+  if (isAllowedLang(base)) {
+    yield startDir;
+    return; // don't descend further
+  }
+
+  // Otherwise, walk children
+  for (const e of entries) {
+    if (e.isDirectory()) {
+      yield* findLangDirs(path.join(startDir, e.name));
+    }
+  }
+}
+
+/** Build index.json within a single <lang> folder */
+function buildIndexForLangDir(langDir) {
+  const files = fs.readdirSync(langDir);
+
+  // Pair card fronts/backs like card1_front.webp / card1_back.webp
   const cardMap = {};
-
-  files.forEach((file) => {
-    const match = file.match(/(card\d+)_(front|back)\.webp$/);
-    if (!match) return;
-    const [_, id, side] = match;
-    cardMap[id] = cardMap[id] || { id };
+  for (const file of files) {
+    const m = file.match(/^(card\d+)_(front|back)\.webp$/i);
+    if (!m) continue;
+    const [, id, side] = m;
+    if (!cardMap[id]) cardMap[id] = { id };
     cardMap[id][side] = file;
+  }
+
+  const cards = Object.values(cardMap).sort((a, b) => {
+    const na = parseInt(a.id.replace("card", ""), 10) || 0;
+    const nb = parseInt(b.id.replace("card", ""), 10) || 0;
+    return na - nb;
   });
 
-  const cards = Object.values(cardMap);
+  const hasInstructionsJson = fs.existsSync(
+    path.join(langDir, "instructions.json")
+  );
 
-  // Check if instructions.json exists
-  const instructionsFile = "instructions.json";
-  const hasInstructions = fs.existsSync(path.join(folder, instructionsFile));
-
-  // Create the full object
   const output = {
-    instructionsPath: hasInstructions ? instructionsFile : null,
-    cards: cards,
+    instructionsPath: hasInstructionsJson ? "instructions.json" : null,
+    cards,
   };
 
-  const indexPath = path.join(folder, "index.json");
+  const indexPath = path.join(langDir, "index.json");
   fs.writeFileSync(indexPath, JSON.stringify(output, null, 2));
-  console.log(
-    `✅ index.json generated for '${lang}' with ${cards.length} cards.`
-  );
-});
+  const rel = path.relative(root, langDir) || path.basename(langDir);
+  console.log(`✅ index.json written for '${rel}' with ${cards.length} cards.`);
+}
+
+function main() {
+  if (!fs.existsSync(root)) {
+    console.error("cards/ folder not found:", root);
+    process.exit(1);
+  }
+
+  let count = 0;
+  for (const langDir of findLangDirs(root)) {
+    buildIndexForLangDir(langDir);
+    count++;
+  }
+
+  if (count === 0) {
+    console.warn(
+      "No language folders found. Expected structure like cards/<category>/[theme]/<deck>/<lang>/"
+    );
+  } else {
+    console.log(`\n🎉 Rebuilt indexes for ${count} language folder(s).`);
+  }
+}
+
+main();
