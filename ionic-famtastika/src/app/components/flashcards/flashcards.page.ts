@@ -5,37 +5,25 @@ import {
   OnDestroy,
   QueryList,
   ViewChildren,
-  TrackByFunction,
-  AfterViewInit, // <-- added
-  NgZone, // <-- added
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonContent,
-  IonButton,
+  IonItem,
+  IonLabel,
+  IonAccordion,
+  IonAccordionGroup,
   IonCard,
-  IonCardContent,
-  IonGrid,
-  IonRow,
-  IonCol,
+  IonCardHeader,
   IonCardTitle,
+  IonButton,
+  IonSpinner,
 } from '@ionic/angular/standalone';
-import { HttpService } from 'src/app/services/http.service';
-import {
-  catchError,
-  map,
-  Observable,
-  of,
-  shareReplay,
-  Subject,
-  switchMap,
-  takeUntil,
-  tap, // <<< add tap
-} from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { catchError, of, Subject, takeUntil } from 'rxjs';
 import { LanguageService } from '../header/language.service';
-import { createGesture, Gesture } from '@ionic/core';
-import { FlashcardPage } from '../flashcard/flashcard.page'; // <-- added
+import { Router } from '@angular/router';
 
 export interface CardWithFlip {
   id: string;
@@ -49,197 +37,103 @@ export interface Instructions {
   description: string;
 }
 
+interface Catalog {
+  basePath: string;
+  categories: Category[];
+}
+
+interface Category {
+  id: string;
+  label: string;
+  themes?: Theme[];
+  decks?: Deck[];
+}
+
+interface Theme {
+  id: string;
+  label: string;
+  decks: Deck[];
+}
+
+interface Deck {
+  id: string;
+  label: string;
+  languages: string[];
+}
+
 @Component({
   selector: 'app-flashcards',
   templateUrl: './flashcards.page.html',
   styleUrls: ['./flashcards.page.scss'],
   standalone: true,
   imports: [
-    IonCardTitle,
-    IonCol,
-    IonRow,
-    IonGrid,
-    IonCardContent,
-    IonCard,
-    IonContent,
-    IonButton,
     CommonModule,
     FormsModule,
+    IonContent,
+    IonItem,
+    IonLabel,
+    IonAccordion,
+    IonAccordionGroup,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonButton,
+    IonSpinner,
   ],
 })
-export class FlashcardsPage implements OnDestroy, AfterViewInit {
-  // <-- added AfterViewInit
+export class FlashcardsPage implements OnInit, OnDestroy {
   @ViewChildren('cardRef', { read: ElementRef })
   cardRefs!: QueryList<ElementRef>;
 
-  selectedLanguage: 'ru' | 'en' = 'en';
-
-  lang$!: Observable<string>;
-  instructions$!: Observable<Instructions | null>;
-  cards: CardWithFlip[] = [];
-
+  selectedLanguage: 'ru' | 'en' = 'ru';
+  catalog: Catalog | null = null;
+  loading = true;
+  error: string | null = null;
   private destroy$ = new Subject<void>();
 
-  // === Native swipe bits ===
-  private topGesture?: Gesture; // <-- added
-  private readonly swipeThreshold = 100; // <-- added (px to count as swipe)
-  private readonly OUT_MS = 400;
-  private isAnimating = false;
-  // =========================
+  // ✅ Replace with your deployed API Gateway endpoint:
+  private catalogUrl =
+    'https://qucprd0kuf.execute-api.us-east-1.amazonaws.com/api/cards/catalog.json';
 
   constructor(
-    private http: HttpService,
+    private http: HttpClient,
     private languageService: LanguageService,
-    private ngZone: NgZone // <-- added
+    private router: Router
   ) {}
 
-  // === Attach native finger slide to the TOP card ===
-  ngAfterViewInit() {
-    this.attachTopCardGesture();
-
-    this.cardRefs.changes
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => this.attachTopCardGesture());
+  ngOnInit(): void {
+    this.fetchCatalog();
   }
 
-  private attachTopCardGesture() {
-    // cleanup previous
-    this.topGesture?.destroy();
-
-    const topEl = this.cardRefs.first?.nativeElement as HTMLElement | undefined;
-    if (!topEl) return;
-
-    // Encourage browsers to treat horizontal as custom; vertical scroll still allowed
-    topEl.style.touchAction = 'pan-y';
-
-    let startX = 0;
-
-    this.topGesture = createGesture({
-      el: topEl,
-      gestureName: 'card-swipe',
-      threshold: 0, // begin immediately
-      gesturePriority: 100, // win against content scroll when horizontal
-      disableScroll: true, // prevent IonContent from hijacking during gesture
-      onStart: (ev: any) => {
-        startX = ev.currentX ?? ev.startX ?? 0;
-      },
-      onMove: (_ev: any) => {
-        // Keeping visuals driven by existing CSS classes (.moving-out/.moving-in)
-      },
-      onEnd: (ev: any) => {
-        if (this.isAnimating || this.cards.length < 2) return;
-
-        const endX = ev.currentX ?? ev.endX ?? startX;
-        const dx = endX - startX;
-        const vx = ev.velocityX ?? 0;
-
-        const swipedRight = dx > this.swipeThreshold || vx > 0.35;
-        const swipedLeft = dx < -this.swipeThreshold || vx < -0.35;
-
-        this.ngZone.run(() => {
-          if (swipedRight) {
-            // existing animation: fly RIGHT, then rotate first -> back
-            this.shuffle();
-          } else if (swipedLeft) {
-            // left flow: fly LEFT, then rotate first -> back (same "next" effect)
-            this.shuffleLeft();
-          }
-        });
-
-        // Reattach to new top after DOM updates
-        setTimeout(() => this.attachTopCardGesture(), 10);
-      },
-    });
-
-    this.topGesture.enable(true);
-  }
-  // ================================================
-
-  // flip by index (immutably)
-  toggleFlip() {
-    if (!this.cards.length) return;
-    this.cards = [
-      { ...this.cards[0], flipped: !this.cards[0].flipped },
-      ...this.cards.slice(1),
-    ];
+  fetchCatalog(): void {
+    this.http
+      .get<Catalog>(this.catalogUrl)
+      .pipe(
+        takeUntil(this.destroy$),
+        catchError((err) => {
+          console.error('❌ Failed to load catalog:', err);
+          this.error = 'Failed to load catalog';
+          this.loading = false;
+          return of(null);
+        })
+      )
+      .subscribe((catalog) => {
+        this.loading = false;
+        this.catalog = catalog;
+        console.log('📚 Catalog loaded:', catalog);
+      });
   }
 
-  /** RIGHT swipe (or button Next): unchanged */
-  shuffle() {
-    if (this.cards.length < 2 || this.isAnimating) return;
+  openDeck(category: string, theme: string | null, deck: string, lang: string) {
+    const path = theme
+      ? `/flashcards/${category}/${theme}/${deck}/${lang}`
+      : `/flashcards/${category}/${deck}/${lang}`;
 
-    const topEl = this.cardRefs.first?.nativeElement as HTMLElement | undefined;
-    if (!topEl) return;
-
-    this.isAnimating = true;
-    topEl.classList.add('moving-out');
-
-    setTimeout(() => {
-      topEl.classList.remove('moving-out');
-
-      const removed = this.cards.shift();
-      if (removed) {
-        removed.flipped = false;
-        this.cards.push(removed);
-      }
-
-      const newTopEl = this.cardRefs.first?.nativeElement as
-        | HTMLElement
-        | undefined;
-      if (newTopEl) {
-        // ensure no leftover from the other direction
-        newTopEl.classList.remove('moving-in-left');
-        newTopEl.classList.add('moving-in');
-        setTimeout(() => {
-          newTopEl.classList.remove('moving-in');
-          this.isAnimating = false;
-        }, this.OUT_MS);
-      } else {
-        this.isAnimating = false;
-      }
-    }, this.OUT_MS);
+    console.log('➡️ Navigating to deck:', path);
+    this.router.navigateByUrl(path);
   }
-
-  /** LEFT swipe: fly out left, rotate, then come in from the LEFT */
-  shuffleLeft() {
-    if (this.cards.length < 2 || this.isAnimating) return;
-
-    const topEl = this.cardRefs.first?.nativeElement as HTMLElement | undefined;
-    if (!topEl) return;
-
-    this.isAnimating = true;
-    topEl.classList.add('moving-out-left');
-
-    setTimeout(() => {
-      topEl.classList.remove('moving-out-left');
-
-      const removed = this.cards.shift();
-      if (removed) {
-        removed.flipped = false;
-        this.cards.push(removed);
-      }
-
-      const newTopEl = this.cardRefs.first?.nativeElement as
-        | HTMLElement
-        | undefined;
-      if (newTopEl) {
-        // ensure no leftover from the other direction
-        newTopEl.classList.remove('moving-in');
-        newTopEl.classList.add('moving-in-left');
-        setTimeout(() => {
-          newTopEl.classList.remove('moving-in-left');
-          this.isAnimating = false;
-        }, this.OUT_MS);
-      } else {
-        this.isAnimating = false;
-      }
-    }, this.OUT_MS);
-  }
-
-  trackById: TrackByFunction<CardWithFlip> = (_i, item) => item.id;
 
   ngOnDestroy(): void {
-    this.topGesture?.destroy(); // <-- added cleanup
     this.destroy$.next();
     this.destroy$.complete();
   }

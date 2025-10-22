@@ -67,7 +67,7 @@ export class HttpService {
   // ---------- Catalog (auto-discovery root) ----------
   getCatalog(): Observable<Catalog> {
     // Your Lambda should expose GET /catalog returning { basePath:'cards', categories: [...] }
-    return this.http.get<Catalog>(`${this.apiBaseUrl}/catalog`).pipe(
+    return this.http.get<Catalog>(`${this.apiBaseUrl}/catalog.json`).pipe(
       catchError((err) => {
         console.error('❌ Failed to load catalog:', err);
         return of({ basePath: 'cards', categories: [] });

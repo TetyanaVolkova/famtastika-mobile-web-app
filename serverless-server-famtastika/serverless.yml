@@ -36,3 +36,9 @@ functions:
       - httpApi:
           path: /api/cards/{category}/{theme}/{deck}/{lang}/{fileName}
           method: GET
+  getCatalog:
+    handler: handlers/catalogService.getCatalog
+    events:
+      - httpApi:
+          method: GET
+          path: /api/cards/catalog.json

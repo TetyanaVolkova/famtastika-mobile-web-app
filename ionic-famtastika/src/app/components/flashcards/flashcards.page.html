@@ -1,8 +1,59 @@
-<ion-content>
-  <ion-grid>
-    <!-- Card deck -->
-    <ion-row>
-      <ion-col> test </ion-col>
-    </ion-row>
-  </ion-grid>
+<ion-content *ngIf="!loading && catalog; else loadingTpl">
+  <ion-card *ngFor="let cat of catalog.categories">
+    <ion-card-header>
+      <ion-card-title>{{ cat.label }}</ion-card-title>
+    </ion-card-header>
+
+    <!-- Category-level decks -->
+    <ion-accordion-group *ngIf="cat.decks?.length">
+      <ion-accordion *ngFor="let deck of cat.decks" [value]="deck.id">
+        <ion-item slot="header">
+          <ion-label>{{ deck.label }}</ion-label>
+        </ion-item>
+        <div class="ion-padding" slot="content">
+          <ion-button
+            *ngFor="let lang of deck.languages"
+            (click)="openDeck(cat.id, null, deck.id, lang)"
+            expand="block"
+          >
+            {{ lang.toUpperCase() }}
+          </ion-button>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+
+    <!-- Theme-level decks -->
+    <ion-accordion-group *ngIf="cat.themes?.length">
+      <ion-accordion *ngFor="let theme of cat.themes" [value]="theme.id">
+        <ion-item slot="header">
+          <ion-label>{{ theme.label }}</ion-label>
+        </ion-item>
+
+        <div class="ion-padding" slot="content">
+          <ion-accordion-group>
+            <ion-accordion *ngFor="let deck of theme.decks" [value]="deck.id">
+              <ion-item slot="header">
+                <ion-label>{{ deck.label }}</ion-label>
+              </ion-item>
+              <div class="ion-padding" slot="content">
+                <ion-button
+                  *ngFor="let lang of deck.languages"
+                  (click)="openDeck(cat.id, theme.id, deck.id, lang)"
+                  expand="block"
+                >
+                  {{ lang.toUpperCase() }}
+                </ion-button>
+              </div>
+            </ion-accordion>
+          </ion-accordion-group>
+        </div>
+      </ion-accordion>
+    </ion-accordion-group>
+  </ion-card>
 </ion-content>
+
+<!-- Loading template -->
+<ng-template #loadingTpl>
+  <ion-spinner name="crescent"></ion-spinner>
+  <p>Loading catalog...</p>
+</ng-template>
